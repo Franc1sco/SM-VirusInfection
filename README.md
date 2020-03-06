@@ -1,6 +1,8 @@
 # Franug-SM-CoronaVirus
 
-SourceMod plugin for simulate coronavirus
+SourceMod plugin for simulate coronavirus.
+
+Idea and discussion here: https://forums.alliedmods.net/showthread.php?t=321894
 
 Still on developing.
 
