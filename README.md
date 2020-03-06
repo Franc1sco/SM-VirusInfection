@@ -1,4 +1,4 @@
-# Franug-SM-CoronaVirus
+# SM-CoronaVirus
 
 SourceMod plugin for simulate coronavirus.
 
