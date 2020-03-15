@@ -8,7 +8,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define DATA "1.0"
+#define DATA "1.1"
 
 
 #define ENGLISH // multi language pending to do
@@ -29,6 +29,7 @@ enum struct Virus{
 	Handle tProgressVirus;
 	Handle tQuarantine;
 	Handle tBlind;
+	bool bSafeZone;
 	bool bVirus;
 	bool bNoticed;
 }
@@ -289,13 +290,15 @@ public Action Timer_ShareVirus(Handle timer, int client)
 
 void ShareVirus(int client, bool cough)
 {
+	if (virus[client].bSafeZone)return;
+	
 	float Origin[3], TargetOrigin[3], Distance;
 	
 	GetClientEyePosition(client, Origin);
 	
 	for (int X = 1; X <= MaxClients; X++)
 	{
-		if(IsClientInGame(X) && IsPlayerAlive(X) && !virus[X].bVirus) 
+		if(IsClientInGame(X) && IsPlayerAlive(X) && !virus[X].bVirus && !virus[X].bSafeZone) 
 		{
 			GetClientEyePosition(X, TargetOrigin);
 			Distance = GetVectorDistance(TargetOrigin,Origin);
@@ -328,6 +331,7 @@ void resetClient(int client)
 	delete virus[client].tQuarantine;
 	virus[client].bVirus = false;
 	virus[client].bNoticed = false;
+	virus[client].bSafeZone = false;
 }
 
 void PerformBlind(int target, int amount, float time)
@@ -394,6 +398,7 @@ public void Zone_OnClientEntry(int client, const char[] zone)
 		
 	if(StrContains(zone, "safezone", false) != 0) return;
 	
+	virus[client].bSafeZone = true;
 	#if defined ENGLISH
 	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} You joined a quarantine zone. Stay here during %i seconds if you think that you have coronavirus.", RoundToNearest(cv_TIME_QUARANTINE.FloatValue));
 	#else
@@ -415,7 +420,7 @@ public void Zone_OnClientLeave(int client, const char[] zone)
 		
 	if(StrContains(zone, "safezone", false) != 0) return;
 	
-	
+	virus[client].bSafeZone = false;
 	#if defined ENGLISH
 	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} You left a quarantine zone.");
 	#else
@@ -423,7 +428,6 @@ public void Zone_OnClientLeave(int client, const char[] zone)
 	#endif
 	
 	if (!virus[client].bVirus)return;
-	
 	
 	delete virus[client].tQuarantine;
 
