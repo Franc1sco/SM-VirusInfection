@@ -8,7 +8,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define DATA "1.1"
+#define DATA "1.2"
 
 
 #define ENGLISH // multi language pending to do
@@ -190,7 +190,7 @@ void Infection(int client)
 
 public Action Timer_StartVirus(Handle timer, int client)
 {
-	delete virus[client].tStartVirus;
+	virus[client].tStartVirus = null;
 	
 	if (!IsClientInGame(client) || !virus[client].bVirus)return;
 	
@@ -232,7 +232,7 @@ public Action Timer_StartVirus(Handle timer, int client)
 
 public Action Timer_ProgressVirus(Handle timer, int client)
 {
-	delete virus[client].tProgressVirus;
+	virus[client].tProgressVirus = null;
 	
 	if (!IsClientInGame(client) || !virus[client].bVirus)resetClient(client);
 	
@@ -276,7 +276,7 @@ public Action Timer_ProgressVirus(Handle timer, int client)
 
 public Action Timer_ShareVirus(Handle timer, int client)
 {
-	delete virus[client].tShareVirus;
+	virus[client].tShareVirus = null;
 	
 	if (!IsClientInGame(client) || !virus[client].bVirus)resetClient(client);
 	
@@ -386,7 +386,7 @@ void PerformBlind(int target, int amount, float time)
 
 public Action Timer_NoBlind(Handle timer, int client)
 {
-	delete virus[client].tBlind;
+	virus[client].tBlind = null;
 	
 	PerformBlind(client, 0, 0.0);
 }
@@ -435,7 +435,7 @@ public void Zone_OnClientLeave(int client, const char[] zone)
 
 public Action Timer_Quarantine(Handle timer, int client)
 {
-	delete virus[client].tQuarantine;
+	virus[client].tQuarantine = null;
 	
 	#if defined ENGLISH
 	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} You have been quarantined long enough so you are healed!");
