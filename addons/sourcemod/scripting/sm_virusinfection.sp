@@ -1,4 +1,4 @@
-/*  SM CoronaVirus Infection
+/*  SM Virus Infection
  *
  *  Copyright (C) 2020 Francisco 'Franc1sco' García and Totenfluch
  * 
@@ -33,7 +33,7 @@
 
 public Plugin myinfo = 
 {
-	name = "SM CoronaVirus Infection",
+	name = "SM Virus Infection",
 	author = "Franc1sco franug",
 	description = "",
 	version = DATA,
@@ -58,18 +58,18 @@ ConVar cv_TIME_START, cv_TIME_EFFECTS, cv_TIME_SHARE, cv_TIME_BLIND, cv_SHARE_CH
 
 public void OnPluginStart()
 {
-	CreateConVar("sm_coronavirus_version", DATA, "Coronavirus plugin version.");
+	CreateConVar("sm_virus_version", DATA, "virus plugin version.");
 	
-	AutoExecConfig_SetFile("sm_coronavirus");
-	cv_TIME_START = AutoExecConfig_CreateConVar("sm_coronavirus_time_start", "60.0", "Seconds for start to know that you have coronavirus.");
-	cv_TIME_EFFECTS = AutoExecConfig_CreateConVar("sm_coronavirus_time_effects", "30.0", "Each X seconds for have the coronavirus effects.");
-	cv_TIME_SHARE = AutoExecConfig_CreateConVar("sm_coronavirus_time_share", "5.0", "Each X seconds for share the coronavirus.");
-	cv_TIME_BLIND = AutoExecConfig_CreateConVar("sm_coronavirus_time_blind", "5.0", "Seconds for have the blind effect.");
-	cv_SHARE_CHANCE = AutoExecConfig_CreateConVar("sm_coronavirus_share_chance", "10", "Chance of share coronavirus.");
-	cv_SHARE_CHANCE_COUGH = AutoExecConfig_CreateConVar("sm_coronavirus_share_chancecough", "60", "Chance of share coronavirus when you cough.");
-	cv_VIRUS_DAMAGE = AutoExecConfig_CreateConVar("sm_coronavirus_virus_damage", "5", "Damage that produce coronavirus when you have the effects.");
-	cv_VIRUS_DISTANCE = AutoExecConfig_CreateConVar("sm_coronavirus_virus_distance", "100.0", "Distance min for share coronavirus to someone.");
-	cv_TIME_QUARANTINE = AutoExecConfig_CreateConVar("sm_coronavirus_quarantine_time", "60.0", "Seconds that you need to stay in a quarantine zone for be healed.");
+	AutoExecConfig_SetFile("sm_virus");
+	cv_TIME_START = AutoExecConfig_CreateConVar("sm_virus_time_start", "60.0", "Seconds for start to know that you have virus.");
+	cv_TIME_EFFECTS = AutoExecConfig_CreateConVar("sm_virus_time_effects", "30.0", "Each X seconds for have the virus effects.");
+	cv_TIME_SHARE = AutoExecConfig_CreateConVar("sm_virus_time_share", "5.0", "Each X seconds for share the virus.");
+	cv_TIME_BLIND = AutoExecConfig_CreateConVar("sm_virus_time_blind", "5.0", "Seconds for have the blind effect.");
+	cv_SHARE_CHANCE = AutoExecConfig_CreateConVar("sm_virus_share_chance", "10", "Chance of share virus.");
+	cv_SHARE_CHANCE_COUGH = AutoExecConfig_CreateConVar("sm_virus_share_chancecough", "60", "Chance of share virus when you cough.");
+	cv_VIRUS_DAMAGE = AutoExecConfig_CreateConVar("sm_virus_virus_damage", "5", "Damage that produce virus when you have the effects.");
+	cv_VIRUS_DISTANCE = AutoExecConfig_CreateConVar("sm_virus_virus_distance", "100.0", "Distance min for share virus to someone.");
+	cv_TIME_QUARANTINE = AutoExecConfig_CreateConVar("sm_virus_quarantine_time", "60.0", "Seconds that you need to stay in a quarantine zone for be healed.");
 	
 	AutoExecConfig_ExecuteFile();
 	AutoExecConfig_CleanFile();
@@ -85,8 +85,8 @@ public void OnPluginStart()
 
 public void OnMapStart()
 {
-	AddFileToDownloadsTable("sound/sm_coronavirus/cough1.mp3");
-	PrecacheSound("sm_coronavirus/cough1.mp3");
+	AddFileToDownloadsTable("sound/sm_virus/cough1.mp3");
+	PrecacheSound("sm_virus/cough1.mp3");
 }
 
 public Action Command_GiveVirus(int client, int args)
@@ -122,9 +122,9 @@ public Action Command_GiveVirus(int client, int args)
 			count++;
 			Infection(iClient);
 			#if defined ENGLISH
-			CReplyToCommand(client, "{green}[SM-CoronaVirus]{lightgreen} Player %N has been infected with coronavirus", iClient);
+			CReplyToCommand(client, "{green}[SM-Virus]{lightgreen} Player %N has been infected with virus", iClient);
 			#else
-			CReplyToCommand(client, "{green}[SM-CoronaVirus]{lightgreen} Jugador %N ha sido infectado con el coronavirus", iClient);
+			CReplyToCommand(client, "{green}[SM-Virus]{lightgreen} Jugador %N ha sido infectado con el virus", iClient);
 			#endif
 		} 
 	}
@@ -168,9 +168,9 @@ public Action Command_RemoveVirus(int client, int args)
 			count++;
 			resetClient(iClient);
 			#if defined ENGLISH
-			CReplyToCommand(client, "{green}[SM-CoronaVirus]{lightgreen} Player %N has been cured of coronavirus", iClient);
+			CReplyToCommand(client, "{green}[SM-Virus]{lightgreen} Player %N has been cured of virus", iClient);
 			#else
-			CReplyToCommand(client, "{green}[SM-CoronaVirus]{lightgreen} Jugador %N ha sido curado del coronavirus", iClient);
+			CReplyToCommand(client, "{green}[SM-Virus]{lightgreen} Jugador %N ha sido curado del virus", iClient);
 			#endif
 		} 
 	}
@@ -215,9 +215,9 @@ public Action Timer_StartVirus(Handle timer, int client)
 	//PrintToConsoleAll("%N Virus effects starting..", client); // debug
 	
 	#if defined ENGLISH
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} Something start to be wrong...");
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} Something start to be wrong...");
 	#else
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} Algo empieza a ir mal...");
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} Algo empieza a ir mal...");
 	#endif
 	
 	virus[client].bNoticed = true;
@@ -257,12 +257,12 @@ public Action Timer_ProgressVirus(Handle timer, int client)
 	//PrintToConsoleAll("%N Virus effects progress..", client); // debug
 	
 	#if defined ENGLISH
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} dry cough");
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} dry cough");
 	#else
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} Tos seca");
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} Tos seca");
 	#endif
 	
-	EmitSoundToAll("sm_coronavirus/cough1.mp3", client);
+	EmitSoundToAll("sm_virus/cough1.mp3", client);
 	
 	int health = GetClientHealth(client) - cv_VIRUS_DAMAGE.IntValue;
 	if(health <= 0)
@@ -417,9 +417,9 @@ public void Zone_OnClientEntry(int client, const char[] zone)
 	
 	virus[client].bSafeZone = true;
 	#if defined ENGLISH
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} You joined a quarantine zone. Stay here during %i seconds if you think that you have coronavirus.", RoundToNearest(cv_TIME_QUARANTINE.FloatValue));
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} You joined a quarantine zone. Stay here during %i seconds if you think that you have virus.", RoundToNearest(cv_TIME_QUARANTINE.FloatValue));
 	#else
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} Has entrado a una zona de cuarentena. Permanece aquí %i segundos si crees que tienes el coronavirus.", RoundToNearest(cv_TIME_QUARANTINE.FloatValue));
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} Has entrado a una zona de cuarentena. Permanece aquí %i segundos si crees que tienes el virus.", RoundToNearest(cv_TIME_QUARANTINE.FloatValue));
 	#endif
 	
 	
@@ -439,9 +439,9 @@ public void Zone_OnClientLeave(int client, const char[] zone)
 	
 	virus[client].bSafeZone = false;
 	#if defined ENGLISH
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} You left a quarantine zone.");
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} You left a quarantine zone.");
 	#else
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} Has salido de una zona de cuarentena.");
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} Has salido de una zona de cuarentena.");
 	#endif
 	
 	if (!virus[client].bVirus)return;
@@ -455,9 +455,9 @@ public Action Timer_Quarantine(Handle timer, int client)
 	virus[client].tQuarantine = null;
 	
 	#if defined ENGLISH
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} You have been quarantined long enough so you are healed!");
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} You have been quarantined long enough so you are healed!");
 	#else
-	CPrintToChat(client, "{green}[SM-CoronaVirus]{lightgreen} Has permanecido en cuarentena el tiempo suficiente así que estas curado!");
+	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} Has permanecido en cuarentena el tiempo suficiente así que estas curado!");
 	#endif
 	
 	resetClient(client);
