@@ -16,6 +16,7 @@
  */
  
 #include <sourcemod>
+#include <sdkhooks>
 #include <sdktools>
 #include <autoexecconfig>
 #include <colorlib>
@@ -25,7 +26,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define DATA "1.2"
+#define DATA "1.3"
 
 
 #define ENGLISH // multi language pending to do
@@ -81,6 +82,16 @@ public void OnPluginStart()
 	HookEventEx("player_death", Event_Restart);
 	
 	g_FadeUserMsgId = GetUserMessageId("Fade");
+	
+	
+	//If we load after the map has started, the OnEntityCreated check wont be called
+	int iSpawn = -1;
+	while ((iSpawn = FindEntityByClassname(iSpawn, "func_respawnroom")) != -1)
+	{
+		// If plugin is loaded early, these won't be called because the func_respawnroom wont exist yet
+		SDKHook(iSpawn, SDKHook_StartTouch, SpawnStartTouch);
+		SDKHook(iSpawn, SDKHook_EndTouch, SpawnEndTouch);
+	}
 }
 
 public void OnMapStart()
@@ -415,6 +426,11 @@ public void Zone_OnClientEntry(int client, const char[] zone)
 		
 	if(StrContains(zone, "safezone", false) != 0) return;
 	
+	joinSafeZone(client);
+}
+
+void joinSafeZone(int client)
+{
 	virus[client].bSafeZone = true;
 	#if defined ENGLISH
 	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} You joined a quarantine zone. Stay here during %i seconds if you think that you have virus.", RoundToNearest(cv_TIME_QUARANTINE.FloatValue));
@@ -427,16 +443,10 @@ public void Zone_OnClientEntry(int client, const char[] zone)
 	
 	delete virus[client].tQuarantine;
 	virus[client].tQuarantine = CreateTimer(cv_TIME_QUARANTINE.FloatValue, Timer_Quarantine, client);
-	
 }
 
-public void Zone_OnClientLeave(int client, const char[] zone)
+void leaveSafeZone(int client)
 {
-	if(client < 1 || client > MaxClients || !IsClientInGame(client) || !IsPlayerAlive(client)) 
-		return;
-		
-	if(StrContains(zone, "safezone", false) != 0) return;
-	
 	virus[client].bSafeZone = false;
 	#if defined ENGLISH
 	CPrintToChat(client, "{green}[SM-Virus]{lightgreen} You left a quarantine zone.");
@@ -447,7 +457,43 @@ public void Zone_OnClientLeave(int client, const char[] zone)
 	if (!virus[client].bVirus)return;
 	
 	delete virus[client].tQuarantine;
+}
 
+public void Zone_OnClientLeave(int client, const char[] zone)
+{
+	if(client < 1 || client > MaxClients || !IsClientInGame(client) || !IsPlayerAlive(client)) 
+		return;
+		
+	if(StrContains(zone, "safezone", false) != 0) return;
+	
+	leaveSafeZone(client);
+
+}
+
+public void OnEntityCreated(int entity, const char[] classname)
+{
+	if (StrEqual(classname, "func_respawnroom", false))	// This is the earliest we can catch this
+	{
+		SDKHook(entity, SDKHook_StartTouch, SpawnStartTouch);
+		SDKHook(entity, SDKHook_EndTouch, SpawnEndTouch);
+	}
+}
+
+public void SpawnStartTouch(int spawn, int client)
+{
+	// Make sure it is a client and not something random
+	if(client < 1 || client > MaxClients || !IsClientInGame(client) || !IsPlayerAlive(client)) 
+		return;
+
+	joinSafeZone(client);
+}
+
+public void SpawnEndTouch(int spawn, int client)
+{
+	if(client < 1 || client > MaxClients || !IsClientInGame(client) || !IsPlayerAlive(client)) 
+		return;
+
+	leaveSafeZone(client);
 }
 
 public Action Timer_Quarantine(Handle timer, int client)
